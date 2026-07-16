@@ -1,0 +1,80 @@
+const socket = io();
+
+let username = "";
+
+const loginBtn = document.getElementById("loginBtn");
+const usernameInput = document.getElementById("username");
+const login = document.getElementById("login");
+const chat = document.getElementById("chat");
+
+const form = document.getElementById("form");
+const input = document.getElementById("input");
+const messages = document.getElementById("messages");
+const userList = document.getElementById("userList");
+
+// Login
+loginBtn.onclick = () => {
+  username = usernameInput.value.trim();
+
+  if (!username) {
+    alert("Enter your name");
+    return;
+  }
+
+  socket.emit("join", username);
+
+  login.style.display = "none";
+  chat.style.display = "block";
+};
+
+// User List
+socket.on("userList", (users) => {
+  userList.innerHTML = '<option value="">🌍 Everyone</option>';
+
+  users.forEach((user) => {
+    if (user !== username) {
+      const option = document.createElement("option");
+      option.value = user;
+      option.textContent = user;
+      userList.appendChild(option);
+    }
+  });
+});
+
+// Send Message
+form.onsubmit = (e) => {
+  e.preventDefault();
+
+  const receiver = userList.value;
+  const message = input.value.trim();
+
+  if (message) {
+
+    if (receiver) {
+      socket.emit("private message", {
+        to: receiver,
+        message: message
+      });
+    } else {
+      socket.emit("chat message", message);
+    }
+
+    input.value = "";
+  }
+};
+
+
+
+// Receive Private Message
+socket.on("private message", (data) => {
+  const li = document.createElement("li");
+  li.textContent = data.from + ": " + data.message;
+  messages.appendChild(li);
+});
+// Receive Public Message
+socket.on("chat message", (data) => {
+  const li = document.createElement("li");
+  li.textContent = data;
+  messages.appendChild(li);
+});
+

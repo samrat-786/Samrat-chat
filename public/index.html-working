@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Samrat Chat</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="login">
+<h2>Samrat Chat</h2>
+<input type="text" id="username" placeholder="Enter your name">
+<button id="loginBtn">Join Chat</button>
+</div>div id="chat" style="display:none;">
+
+<select id="userList">
+<option value="">🌍 Everyone</option>
+</select>
+
+<ul id="messages"></ul>
+<button id="voiceBtn">🎤 Voice</button>
+<input type="file" id="imageInput" accept="image/*" hidden>
+<button id="photoBtn" type="button">📷 Photo</button>
+<form id="form">
+<img id="imagePreview" style="width:200px;display:none;">
+<button id="sendImageBtn" type="button" style="display:none;">Send Photo</button>
+<input
+id="input"
+type="text"
+placeholder="Type message..."
+autocomplete="off"
+>
+<button type="submit">Send</button>
+</form>
+
+</div><script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

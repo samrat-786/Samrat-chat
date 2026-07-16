@@ -1,0 +1,70 @@
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+app.use(express.static("public"));
+
+let users = {};
+
+io.on("connection", (socket) => {
+
+  socket.on("join", (name) => {
+    socket.username = name;
+    users[name] = socket.id;
+
+    io.emit("userList", Object.keys(users));
+
+    socket.emit("private message", {
+      from: "System",
+      message: "আপনি লগইন করেছেন: " + name
+    });
+  });
+socket.on("chat message", (message) => {
+  io.emit("chat message", {
+    from: socket.username,
+    message: message,
+    time: new Date().toLocaleTimeString()
+  });
+});
+
+socket.on("image message", (data) => {
+  io.emit("image message", {
+    from: socket.username,
+    image: data.image
+  });
+});
+  socket.on("private message", (data) => {
+  const receiverId = users[data.to];
+
+  if (receiverId) {
+    io.to(receiverId).emit("private message", {
+      from: socket.username,
+      message: data.message,
+      time: new Date().toLocaleTimeString()
+    });
+
+    socket.emit("private message", {
+      from: "You",
+      message: data.message,
+      time: new Date().toLocaleTimeString()
+    });
+  }
+});
+
+socket.on("disconnect", () => {
+  if (socket.username) {
+    delete users[socket.username];
+    io.emit("userList", Object.keys(users));
+  }
+});
+
+
+});
+
+server.listen(3000, () => {
+  console.log("Server running at http://localhost:3000");
+});
