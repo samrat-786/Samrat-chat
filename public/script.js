@@ -19,7 +19,6 @@ const voiceBtn = document.getElementById("voiceBtn");
 
 const imagePreview = document.getElementById("imagePreview");
 const sendImageBtn = document.getElementById("sendImageBtn");
-
 loginBtn.onclick = () => {
   username = usernameInput.value.trim();
 
@@ -28,11 +27,25 @@ loginBtn.onclick = () => {
     return;
   }
 
+  localStorage.setItem("username", username);
+
   socket.emit("join", username);
 
   login.style.display = "none";
   chat.style.display = "block";
-};// User List
+};
+
+window.onload = () => {
+  const savedName = localStorage.getItem("username");
+
+  if (savedName) {
+    username = savedName;
+    socket.emit("join", username);
+    login.style.display = "none";
+    chat.style.display = "block";
+  }
+};
+// User List
 socket.on("userList", (users) => {
   userList.innerHTML = '<option value="">🌍 Everyone</option>';
 
