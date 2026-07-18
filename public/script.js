@@ -44,7 +44,25 @@ socket.on("userList", (users) => {
       userList.appendChild(option);
     }
   });
+
 });
+
+socket.on("old messages", (oldMessages) => {
+  oldMessages.forEach((data) => {
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      <b>${data.from}</b><br>
+      ${data.message}<br>
+      <small>🕒 ${data.time}</small>
+    `;
+
+    messages.appendChild(li);
+  });
+
+  messages.scrollTop = messages.scrollHeight;
+});
+
 
 // Send Message
 form.onsubmit = (e) => {
@@ -104,28 +122,6 @@ socket.on("private message", (data) => {
   messages.appendChild(li);
   messages.scrollTop = messages.scrollHeight;
 });
-
-// Send Message
-form.onsubmit = (e) => {
-  e.preventDefault();
-
-  const receiver = userList.value;
-  const message = input.value.trim();
-
-  if (message) {
-
-    if (receiver) {
-      socket.emit("private message", {
-        to: receiver,
-        message: message
-      });
-    } else {
-      socket.emit("chat message", message);
-    }
-
-    input.value = "";
-  }
-};
 
 
 // Receive Public Message
