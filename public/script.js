@@ -140,9 +140,7 @@ socket.on("private message", (data) => {
 // Receive Public Message
 
 
-voiceBtn.onclick = () => {
-  alert("🎤 Voice Message feature is coming...");
-};
+
 photoBtn.onclick = () => {
   imageInput.click();
 };
