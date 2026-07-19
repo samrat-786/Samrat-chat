@@ -58,7 +58,12 @@ socket.on("image message", (data) => {
       image: data.image
     });
   });
-
+socket.on("voice message", (data) => {
+    io.emit("voice message", {
+      from: socket.username,
+      audio: data.audio
+    });
+});
   socket.on("private message", (data) => {
     const receiverId = users[data.to];
 
