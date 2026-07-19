@@ -180,40 +180,44 @@ sendImageBtn.onclick = () => {
     imagePreview.style.display = "none";
     sendImageBtn.style.display = "none";
     selectedImage = "";
-  }
+   }
 };
 
 let mediaRecorder;
 let audioChunks = [];
 
 voiceBtn.onclick = async () => {
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  if (!mediaRecorder || mediaRecorder.state === "inactive") {
 
-  mediaRecorder = new MediaRecorder(stream);
-  audioChunks = [];
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-  mediaRecorder.ondataavailable = (e) => {
-    audioChunks.push(e.data);
-  };
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks = [];
 
-  mediaRecorder.onstop = () => {
-    const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      socket.emit("voice message", {
-        audio: reader.result
-      });
+    mediaRecorder.ondataavailable = (e) => {
+      audioChunks.push(e.data);
     };
 
-    reader.readAsDataURL(audioBlob);
-  };
+    mediaRecorder.onstop = () => {
+      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+      const reader = new FileReader();
 
-  mediaRecorder.start();
+      reader.onload = () => {
+        socket.emit("voice message", {
+          audio: reader.result
+        });
+      };
 
-  setTimeout(() => {
+      reader.readAsDataURL(audioBlob);
+    };
+
+    mediaRecorder.start();
+    voiceBtn.textContent = "⏹ Stop Voice";
+
+  } else {
     mediaRecorder.stop();
-  }, 5000);
+    voiceBtn.textContent = "🎤 Voice";
+  }
 };
 
 socket.on("voice message", (data) => {
