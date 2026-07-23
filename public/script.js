@@ -194,7 +194,11 @@ voiceBtn.onclick = async () => {
         audio: true
       });
 
-      mediaRecorder = new MediaRecorder(stream);
+      const options = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+    ? { mimeType: "audio/webm;codecs=opus" }
+    : {};
+
+mediaRecorder = new MediaRecorder(stream, options);
       audioChunks = [];
 
       mediaRecorder.ondataavailable = (e) => {
@@ -202,9 +206,9 @@ voiceBtn.onclick = async () => {
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunks, {
-          type: "audio/webm"
-        });
+       const audioBlob = new Blob(audioChunks, {
+  type: mediaRecorder.mimeType || "audio/webm"
+}); 
 
         const reader = new FileReader();
 
