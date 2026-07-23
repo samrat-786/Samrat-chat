@@ -187,6 +187,7 @@ let mediaRecorder;
 let audioChunks = [];
 
 voiceBtn.onclick = async () => {
+  try {
   if (!mediaRecorder || mediaRecorder.state === "inactive") {
 
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -218,6 +219,11 @@ voiceBtn.onclick = async () => {
     mediaRecorder.stop();
     voiceBtn.textContent = "🎤 Voice";
   }
+
+} catch (err) {
+  alert("Microphone Error: " + err.message);
+  console.error(err);
+}
 };
 
 socket.on("voice message", (data) => {
