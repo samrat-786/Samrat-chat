@@ -183,3 +183,62 @@ sendImageBtn.onclick = () => {
    }
 };
 
+let mediaRecorder;
+let audioChunks = [];
+
+voiceBtn.onclick = async () => {
+  try {
+    if (!mediaRecorder || mediaRecorder.state === "inactive") {
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        audioChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunks, {
+          type: "audio/webm"
+        });
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          socket.emit("voice message", {
+            audio: reader.result
+          });
+        };
+
+        reader.readAsDataURL(audioBlob);
+      };
+
+      mediaRecorder.start();
+      voiceBtn.textContent = "⏹ Stop Voice";
+
+    } else {
+      mediaRecorder.stop();
+      voiceBtn.textContent = "🎤 Voice";
+    }
+
+  } catch (err) {
+    alert("Microphone Error: " + err.message);
+  }
+};
+
+
+socket.on("voice message", (data) => {
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.src = data.audio;
+
+  const li = document.createElement("li");
+  li.textContent = data.from + ": ";
+  li.appendChild(audio);
+
+  messages.appendChild(li);
+});
