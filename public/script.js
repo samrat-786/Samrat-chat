@@ -190,8 +190,13 @@ voiceBtn.onclick = async () => {
   try {
   if (!mediaRecorder || mediaRecorder.state === "inactive") {
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
+    const stream = await navigator.mediaDevices.getUserMedia({
+  audio: {
+    echoCancellation: true,
+    noiseSuppression: true,
+    autoGainControl: true
+  }
+});
     mediaRecorder = new MediaRecorder(stream);
     audioChunks = [];
 
