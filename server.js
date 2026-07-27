@@ -24,9 +24,11 @@ io.on("connection", (socket) => {
     });
   });
 socket.on("chat message", (message) => {
+
   io.emit("chat message", {
     from: socket.username,
-    message: message
+    message: message,
+    time: new Date().toLocaleString()
   });
 });
 socket.on("image message", (data) => {

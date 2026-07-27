@@ -129,7 +129,7 @@ if (data.from === username) {
 <div class="bubble">
   <b>${data.from}</b><br>
   ${data.message}
-  <div class="time" id="tick-${data.id}">🕒 ${data.time} ✓</div>
+  <div class="time">🕒 ${data.time || new Date().toLocaleString()} ✓</div>
 `;
   messages.appendChild(li);
   messages.scrollTop = messages.scrollHeight;
@@ -153,7 +153,7 @@ if (data.from === username || data.from === "You") {
 <div class="bubble">
   <b>🔒 ${data.from}</b><br>
   ${data.message}
-  <div class="time" id="tick-${data.id}">🕒 ${data.time} ✓</div>
+ <div class="time">🕒 ${data.time || new Date().toLocaleString()} ✓</div>
 </div>
 `;
   messages.appendChild(li);
