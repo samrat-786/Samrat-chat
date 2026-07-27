@@ -1,0 +1,38 @@
+<div id="login">
+<hr>
+
+<h3>Register</h3>
+
+<input id="regUsername" type="text" placeholder="New Username">
+
+<input id="regPassword" type="password" placeholder="New Password">
+
+<button id="registerBtn">Register</button>
+  <h2>Login</h2>
+  <input id="username" type="text" placeholder="Enter your name">
+<input id="password" type="password" placeholder="Enter Password">
+<input type="file" id="profilePhoto" accept="image/*"> 
+ <button id="loginBtn">Login</button>
+</div>
+
+<div id="chat" style="display:none;">
+  <h2>💬 Samrat Chat</h2>
+<select id="userList">
+  <option value="">Select User</option>
+</select>
+  <ul id="messages"></ul>
+
+  <form id="form">
+    <input id="input" type="text" placeholder="Type a message..." autocomplete="off">
+    <button type="submit">Send</button>
+  </form>
+</div>
+
+<button id="dark">🌙 Dark Mode</button>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
+
