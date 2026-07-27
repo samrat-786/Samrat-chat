@@ -1,9 +1,8 @@
 const socket = io();
 
 let username = "";
-let profilePhoto = "";
+let selectedImage = "";
 
-const photoInput = document.getElementById("profilePhoto");
 const loginBtn = document.getElementById("loginBtn");
 const usernameInput = document.getElementById("username");
 const login = document.getElementById("login");
@@ -11,84 +10,290 @@ const chat = document.getElementById("chat");
 
 const form = document.getElementById("form");
 const input = document.getElementById("input");
+let typing = false;
+
+input.addEventListener("input", () => {
+  if (!typing) {
+    typing = true;
+    socket.emit("typing");
+  }
+
+  clearTimeout(window.typingTimer);
+
+  window.typingTimer = setTimeout(() => {
+    typing = false;
+    socket.emit("stop typing");
+  }, 3000);
+});
 const messages = document.getElementById("messages");
 const userList = document.getElementById("userList");
 
-loginBtn.addEventListener("click", () => {
+const photoBtn = document.getElementById("photoBtn");
+const imageInput = document.getElementById("imageInput");
+const voiceBtn = document.getElementById("voiceBtn");
+
+const imagePreview = document.getElementById("imagePreview");
+const sendImageBtn = document.getElementById("sendImageBtn");
+loginBtn.onclick = () => {
   username = usernameInput.value.trim();
-if (photoInput.files.length > 0) {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    profilePhoto = e.target.result;
-  };
-  reader.readAsDataURL(photoInput.files[0]);
-}
-  if (username === "") {
+
+  if (!username) {
     alert("Enter your name");
     return;
   }
+
+  localStorage.setItem("username", username);
 
   socket.emit("join", username);
 
   login.style.display = "none";
   chat.style.display = "block";
-});
+};
 
-socket.on("user list", (users) => {
-  userList.innerHTML = '<option value="">Select User</option>';
 
-  for (let id in users) {
-    if (users[id] !== username) {
-      userList.innerHTML += `<option value="${id}">${users[id]}</option>`;
+// User List
+
+socket.on("registeredUsers", (users) => {
+console.log("REGISTERED USERS:", users);
+  userList.innerHTML = '<option value="">🌍 Everyone</option>';
+
+  users.forEach((user) => {
+if (!user.username) return;
+    if (user.username !== username) {
+      const option = document.createElement("option");
+      option.value = user.username;
+    option.textContent = (user.online ? "🟢 " : "⚫ ") + user.username;
+
+      userList.appendChild(option);
     }
-  }
+  });
 });
 
-form.addEventListener("submit", (e) => {
+socket.on("old messages", (oldMessages) => {
+  oldMessages.forEach((data) => {
+    const li = document.createElement("li");
+if (data.from === username) {
+  li.className = "my-message";
+} else {
+  li.className = "other-message";
+}
+   li.innerHTML = `
+<div class="bubble">
+  <b>${data.from}</b><br>
+  ${data.message}
+  <div class="time">🕒 ${data.time}</div>
+</div>
+`;
+
+    messages.appendChild(li);
+  });
+
+  messages.scrollTop = messages.scrollHeight;
+});
+
+
+// Send Message
+form.onsubmit = (e) => {
   e.preventDefault();
 
-  if (input.value.trim() === "") return;
+  const receiver = userList.value;
+  const message = input.value.trim();
 
-  if (userList.value !== "") {
+  if (!message) return;
+
+  if (receiver) {
     socket.emit("private message", {
-      to: userList.value,
-      message: input.value
+      to: receiver,
+      message: message
     });
   } else {
-    socket.emit("chat message", input.value);
+    socket.emit("chat message", message);
   }
 
   input.value = "";
-});
-
-socket.on("chat message", (msg) => {
+};// Receive Public Message
+socket.on("chat message", (data) => {
   const li = document.createElement("li");
-  li.textContent = msg;
+if (data.from === username) {
+  li.className = "my-message";
+} else {
+  li.className = "other-message";
+}
+  const date = new Date();
+  const today =
+    date.getDate() + "/" +
+    (date.getMonth() + 1) + "/" +
+    date.getFullYear();
+
+ li.innerHTML = `
+<div class="bubble">
+  <b>${data.from}</b><br>
+  ${data.message}
+  <div class="time" id="tick-${data.id}">🕒 ${data.time} ✓</div>
+`;
   messages.appendChild(li);
-  window.scrollTo(0, document.body.scrollHeight);
+  messages.scrollTop = messages.scrollHeight;
 });
-const registerBtn = document.getElementById("registerBtn");
 
-registerBtn.addEventListener("click", async () => {
-  const username = document.getElementById("regUsername").value;
-  const password = document.getElementById("regPassword").value;
+// Receive Private Message
+socket.on("private message", (data) => {
+  const li = document.createElement("li");
+if (data.from === username || data.from === "You") {
+  li.className = "my-message";
+} else {
+  li.className = "other-message";
+}
+  const date = new Date();
+  const today =
+    date.getDate() + "/" +
+    (date.getMonth() + 1) + "/" +
+    date.getFullYear();
 
-  if (!username || !password) {
-    alert("সব তথ্য লিখুন");
-    return;
+  li.innerHTML = `
+<div class="bubble">
+  <b>🔒 ${data.from}</b><br>
+  ${data.message}
+  <div class="time" id="tick-${data.id}">🕒 ${data.time} ✓</div>
+</div>
+`;
+  messages.appendChild(li);
+  messages.scrollTop = messages.scrollHeight;
+if (data.from !== "You") {
+  socket.emit("message received", {
+    id: data.id,
+    senderId: data.senderId
+  });
+}
+});
+
+// Receive Public Message
+
+
+
+photoBtn.onclick = () => {
+  imageInput.click();
+};
+imageInput.onchange = () => {
+  const file = imageInput.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+ reader.onload = () => {
+  selectedImage = reader.result;
+  imagePreview.src = selectedImage;
+  imagePreview.style.display = "block";
+  sendImageBtn.style.display = "block";
+};
+
+    reader.readAsDataURL(file);
+  }
+};
+socket.on("image message", (data) => {
+  const li = document.createElement("li");
+
+  if (data.from === username) {
+    li.className = "my-message";
+  } else {
+    li.className = "other-message";
   }
 
-  const res = await fetch("/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      username: username,
-      password: password
-    })
-  });
+  li.innerHTML = `
+    <div class="bubble">
+      <b>${data.from}</b><br>
+      <img src="${data.image}" style="max-width:200px;border-radius:10px;">
+    </div>
+  `;
 
-  const data = await res.json();
-  alert(data.message);
+  messages.appendChild(li);
+  messages.scrollTop = messages.scrollHeight;
+});
+sendImageBtn.onclick = () => {
+  if (selectedImage) {
+    socket.emit("image message", {
+      image: selectedImage
+    });
+
+    imagePreview.style.display = "none";
+    sendImageBtn.style.display = "none";
+    selectedImage = "";
+   }
+};
+
+let mediaRecorder;
+let audioChunks = [];
+
+voiceBtn.onclick = async () => {
+  try {
+    if (!mediaRecorder || mediaRecorder.state === "inactive") {
+let stream;
+
+try {
+  stream = await navigator.mediaDevices.getUserMedia({
+    audio: true
+  });
+} catch (err) {
+  alert("Microphone Error: " + err.name + "\n" + err.message);
+  return;
+}
+
+      const options = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+    ? { mimeType: "audio/webm;codecs=opus" }
+    : {};
+
+mediaRecorder = new MediaRecorder(stream, options);
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        audioChunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+       const audioBlob = new Blob(audioChunks, {
+  type: mediaRecorder.mimeType || "audio/webm"
+}); 
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+          socket.emit("voice message", {
+            audio: reader.result
+          });
+        };
+
+        reader.readAsDataURL(audioBlob);
+      };
+
+      mediaRecorder.start();
+      voiceBtn.textContent = "⏹ Stop Voice";
+
+    } else {
+      mediaRecorder.stop();
+      voiceBtn.textContent = "🎤 Voice";
+    }
+
+  } catch (err) {
+    alert("Microphone Error: " + err.message);
+  }
+};
+
+
+socket.on("voice message", (data) => {
+  const audio = document.createElement("audio");
+  audio.controls = true;
+  audio.src = data.audio;
+
+  const li = document.createElement("li");
+  li.textContent = data.from + ": ";
+  li.appendChild(audio);
+
+  messages.appendChild(li);
+});
+socket.on("typing", (name) => {
+  document.getElementById("typing").textContent =
+    name + " is typing...";
+});
+
+socket.on("stop typing", () => {
+  document.getElementById("typing").textContent = "";
 });

@@ -1,6 +1,4 @@
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
 const http = require("http");
 const { Server } = require("socket.io");
 
@@ -8,51 +6,64 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const users = {};
-
 app.use(express.static("public"));
-app.use(express.json());
 
-app.post("/register", (req, res) => {
-  const { username, password } = req.body;
+let users = {};
 
-  const file = path.join(__dirname, "users.json");
-  const users = JSON.parse(fs.readFileSync(file));
-
-  if (users.find(u => u.username === username)) {
-    return res.json({ success: false, message: "User already exists" });
-  }
-
-  users.push({ username, password });
-
-  fs.writeFileSync(file, JSON.stringify(users, null, 2));
-
-  res.json({ success: true, message: "Registration successful" });
-});
 io.on("connection", (socket) => {
-  console.log("User connected");
 
   socket.on("join", (name) => {
-    socket.username = name || "Guest";
-    users[socket.id] = socket.username;
+    socket.username = name;
+    users[name] = socket.id;
 
-    io.emit("user list", users);
-    io.emit("chat message", `${socket.username} joined the chat`);
+    io.emit("userList", Object.keys(users));
+
+    socket.emit("private message", {
+      from: "System",
+      message: "আপনি লগইন করেছেন: " + name
+    });
   });
-
-  socket.on("chat message", (msg) => {
-    io.emit("chat message", `${socket.username}: ${msg}`);
+socket.on("chat message", (message) => {
+  io.emit("chat message", {
+    from: socket.username,
+    message: message
   });
-
+});
+socket.on("image message", (data) => {
+  io.emit("image message", {
+    from: socket.username,
+    image: data.image
+  });
+});
+socket.on("voice message", (data) => {
+  io.emit("voice message", {
+    from: socket.username,
+    audio: data.audio
+  });
+});
   socket.on("private message", (data) => {
-    io.to(data.to).emit("chat message", `(Private) ${socket.username}: ${data.message}`);
+    const receiverId = users[data.to];
+
+    if (receiverId) {
+      io.to(receiverId).emit("private message", {
+        from: socket.username,
+        message: data.message
+      });
+
+      socket.emit("private message", {
+        from: "You",
+        message: data.message
+      });
+    }
   });
 
   socket.on("disconnect", () => {
-    delete users[socket.id];
-    io.emit("user list", users);
-    console.log("User disconnected");
+    if (socket.username) {
+      delete users[socket.username];
+      io.emit("userList", Object.keys(users));
+    }
   });
+
 });
 
 server.listen(3000, () => {
