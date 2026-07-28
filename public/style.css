@@ -74,3 +74,14 @@ button {
 #userList {
   font-size: 14px;
 }
+#typing {
+  font-size: 13px;
+  font-style: italic;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}

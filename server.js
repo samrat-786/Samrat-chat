@@ -34,6 +34,13 @@ io.emit("registeredUsers",
 })
 });
   });
+socket.on("typing", () => {
+  socket.broadcast.emit("typing", socket.username);
+});
+
+socket.on("stop typing", () => {
+  socket.broadcast.emit("stop typing");
+});
 socket.on("chat message", (message) => {
 const msgId = Date.now();
   io.emit("chat message", {

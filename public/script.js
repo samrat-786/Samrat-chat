@@ -308,7 +308,7 @@ socket.on("voice message", (data) => {
 });
 socket.on("typing", (name) => {
   document.getElementById("typing").textContent =
-    name + " is typing...";
+    "✍️ " + name + " typing..."
 });
 
 socket.on("stop typing", () => {
