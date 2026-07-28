@@ -9,12 +9,14 @@ const io = new Server(server);
 app.use(express.static("public"));
 
 let users = {};
+let userStatus = {};
 
 io.on("connection", (socket) => {
 
   socket.on("join", (name) => {
   socket.username = name.trim().toLowerCase();
     users[name] = socket.id;
+userStatus[name] = "online";
 
     io.emit("userList", Object.keys(users));
 
@@ -72,6 +74,7 @@ socket.on("message received", (data) => {
   socket.on("disconnect", () => {
     if (socket.username) {
       delete users[socket.username];
+userStatus[socket.username] = "offline";
       io.emit("userList", Object.keys(users));
     }
   });
