@@ -35,7 +35,7 @@ const voiceBtn = document.getElementById("voiceBtn");
 const imagePreview = document.getElementById("imagePreview");
 const sendImageBtn = document.getElementById("sendImageBtn");
 loginBtn.onclick = () => {
-  username = usernameInput.value.trim();
+  username = usernameInput.value.trim().toLowerCase()
 
   if (!username) {
     alert("Enter your name");
@@ -77,11 +77,11 @@ if (data.from === username) {
 } else {
   li.className = "other-message";
 }
-   li.innerHTML = `
+  li.innerHTML = `
 <div class="bubble">
   <b>${data.from}</b><br>
   ${data.message}
-  <div class="time">🕒 ${data.time}</div>
+  <div class="time">🕒 ${data.time || new Date().toLocaleString()} <span id="tick-${data.id}">✓</span></div>
 </div>
 `;
 
@@ -113,6 +113,8 @@ form.onsubmit = (e) => {
   input.value = "";
 };// Receive Public Message
 socket.on("chat message", (data) => {
+console.log("MY USER:", username);
+console.log("FROM:", data.from);
   const li = document.createElement("li");
 if (data.from === username) {
   li.className = "my-message";
@@ -129,7 +131,8 @@ if (data.from === username) {
 <div class="bubble">
   <b>${data.from}</b><br>
   ${data.message}
-  <div class="time">🕒 ${data.time || new Date().toLocaleString()} ✓</div>
+  <div class="time">🕒 ${data.time || new Date().toLocaleString()} <span id="tick-${data.id}">✓</span></div>
+</div>
 `;
   messages.appendChild(li);
   messages.scrollTop = messages.scrollHeight;

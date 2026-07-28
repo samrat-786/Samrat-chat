@@ -18,14 +18,20 @@ h2 {
   overflow-y: auto;
   border-radius: 10px;
 }
-
 #messages li {
-  background: #dcf8c6;
-  margin: 8px;
-  padding: 10px 15px;
-  border-radius: 15px;
+display: block;
+  margin: 5px;
+  padding: 6px 10px;
+  border-radius: 10px;
   width: fit-content;
-  max-width: 70%;
+  max-width: 75%;
+  font-size: 14px;
+}
+
+.time {
+  font-size: 10px;
+  color: gray;
+  margin-top: 3px;
 }
 
 #userList {
@@ -52,4 +58,16 @@ button {
 
 #dark {
   margin-top: 15px;
+}
+.my-message {
+  background: #dcf8c6;
+  float: right;
+  clear: both;
+  border-bottom-right-radius: 2px;
+}
+
+.other-message {
+  background: white;
+  margin-right: auto;
+  border-bottom-left-radius: 2px;
 }

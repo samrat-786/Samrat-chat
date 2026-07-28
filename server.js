@@ -13,7 +13,7 @@ let users = {};
 io.on("connection", (socket) => {
 
   socket.on("join", (name) => {
-    socket.username = name;
+  socket.username = name.trim().toLowerCase();
     users[name] = socket.id;
 
     io.emit("userList", Object.keys(users));
@@ -24,11 +24,12 @@ io.on("connection", (socket) => {
     });
   });
 socket.on("chat message", (message) => {
-
+const msgId = Date.now();
   io.emit("chat message", {
     from: socket.username,
     message: message,
-    time: new Date().toLocaleString()
+    time: new Date().toLocaleString(),
+id: msgId
   });
 });
 socket.on("image message", (data) => {
