@@ -10,6 +10,7 @@ app.use(express.static("public"));
 
 let users = {};
 let userStatus = {};
+let lastSeen = {};
 
 io.on("connection", (socket) => {
 
@@ -20,7 +21,8 @@ userStatus[name] = "online";
 io.emit("registeredUsers",
   Object.keys(userStatus).map(name => ({
     username: name,
-    online: userStatus[name] === "online"
+    online: userStatus[name] === "online",
+    lastSeen: lastSeen[name] || ""
   }))
 );
 
@@ -79,10 +81,14 @@ socket.on("message received", (data) => {
     if (socket.username) {
       delete users[socket.username];
 userStatus[socket.username] = "offline";
-     io.emit("registeredUsers",
+lastSeen[socket.username] = new Date().toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata"
+});
+    io.emit("registeredUsers",
   Object.keys(userStatus).map(name => ({
     username: name,
-    online: userStatus[name] === "online"
+    online: userStatus[name] === "online",
+    lastSeen: lastSeen[name] || ""
   }))
 );
     }

@@ -71,3 +71,6 @@ button {
   margin-right: auto;
   border-bottom-left-radius: 2px;
 }
+#userList {
+  font-size: 14px;
+}

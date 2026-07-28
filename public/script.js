@@ -74,7 +74,9 @@ if (!user.username) return;
     if (user.username !== username) {
       const option = document.createElement("option");
       option.value = user.username;
-    option.textContent = (user.online ? "🟢 " : "⚫ ") + user.username;
+   option.textContent = user.online
+  ? "🟢 " + user.username + " (Online)"
+  : "⚫ " + user.username + " (Last seen: " + user.lastSeen + ")";
 
       userList.appendChild(option);
     }
