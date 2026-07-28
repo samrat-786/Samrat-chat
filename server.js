@@ -26,11 +26,11 @@ io.on("connection", (socket) => {
 socket.on("chat message", (message) => {
 const msgId = Date.now();
   io.emit("chat message", {
-    from: socket.username,
-    message: message,
-    time: new Date().toLocaleString(),
-id: msgId
-  });
+  from: socket.username,
+  message: message,
+  time: new Date().toLocaleString(),
+  id: msgId
+});
 });
 socket.on("image message", (data) => {
   io.emit("image message", {
@@ -59,7 +59,11 @@ socket.on("voice message", (data) => {
       });
     }
   });
-
+socket.on("message received", (data) => {
+  io.to(data.senderId).emit("message delivered", {
+    id: data.id
+  });
+});
   socket.on("disconnect", () => {
     if (socket.username) {
       delete users[socket.username];

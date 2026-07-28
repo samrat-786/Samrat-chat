@@ -81,7 +81,7 @@ if (data.from === username) {
 <div class="bubble">
   <b>${data.from}</b><br>
   ${data.message}
-  <div class="time">🕒 ${data.time || new Date().toLocaleString()} <span id="tick-${data.id}">✓</span></div>
+  <div class="time">🕒 ${data.time} <span id="tick-${data.id}">✓</span></div>
 </div>
 `;
 
@@ -131,7 +131,7 @@ if (data.from === username) {
 <div class="bubble">
   <b>${data.from}</b><br>
   ${data.message}
-  <div class="time">🕒 ${data.time || new Date().toLocaleString()} <span id="tick-${data.id}">✓</span></div>
+  <div class="time">🕒 ${data.time} <span id="tick-${data.id}">✓</span></div>
 </div>
 `;
   messages.appendChild(li);
@@ -156,7 +156,7 @@ if (data.from === username || data.from === "You") {
 <div class="bubble">
   <b>🔒 ${data.from}</b><br>
   ${data.message}
- <div class="time">🕒 ${data.time || new Date().toLocaleString()} ✓</div>
+ <div class="time">🕒 ${data.time} ✓</div>
 </div>
 `;
   messages.appendChild(li);
@@ -299,4 +299,10 @@ socket.on("typing", (name) => {
 
 socket.on("stop typing", () => {
   document.getElementById("typing").textContent = "";
+});
+socket.on("message delivered", (data) => {
+  const tick = document.getElementById(`tick-${data.id}`);
+  if (tick) {
+    tick.textContent = "✓✓";
+  }
 });
