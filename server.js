@@ -21,7 +21,9 @@ io.on("connection", (socket) => {
    socket.emit("private message", {
   from: "System",
   message: "আপনি লগইন করেছেন: " + name,
-  time: new Date().toLocaleString()
+  time: new Date().toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata"
+})
 });
   });
 socket.on("chat message", (message) => {
@@ -29,7 +31,9 @@ const msgId = Date.now();
   io.emit("chat message", {
   from: socket.username,
   message: message,
-  time: new Date().toLocaleString(),
+  time: new Date().toLocaleString("en-IN", {
+  timeZone: "Asia/Kolkata"
+}),
   id: msgId
 });
 });
