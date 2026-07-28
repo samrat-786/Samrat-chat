@@ -34,6 +34,18 @@ const voiceBtn = document.getElementById("voiceBtn");
 
 const imagePreview = document.getElementById("imagePreview");
 const sendImageBtn = document.getElementById("sendImageBtn");
+socket.on("connect", () => {
+  const savedUser = localStorage.getItem("username");
+
+  if (savedUser) {
+    username = savedUser;
+
+    socket.emit("join", username);
+
+    login.style.display = "none";
+    chat.style.display = "block";
+  }
+});
 loginBtn.onclick = () => {
   username = usernameInput.value.trim().toLowerCase()
 
@@ -306,3 +318,12 @@ socket.on("message delivered", (data) => {
     tick.textContent = "✓✓";
   }
 });
+const logoutBtn = document.getElementById("logoutBtn");
+
+logoutBtn.onclick = () => {
+  localStorage.removeItem("username");
+  username = "";
+  login.style.display = "block";
+  chat.style.display = "none";
+  usernameInput.value = "";
+};
