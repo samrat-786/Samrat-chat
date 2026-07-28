@@ -326,4 +326,5 @@ logoutBtn.onclick = () => {
   login.style.display = "block";
   chat.style.display = "none";
   usernameInput.value = "";
+messages.innerHTML = "";
 };
