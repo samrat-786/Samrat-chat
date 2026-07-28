@@ -18,10 +18,11 @@ io.on("connection", (socket) => {
 
     io.emit("userList", Object.keys(users));
 
-    socket.emit("private message", {
-      from: "System",
-      message: "আপনি লগইন করেছেন: " + name
-    });
+   socket.emit("private message", {
+  from: "System",
+  message: "আপনি লগইন করেছেন: " + name,
+  time: new Date().toLocaleString()
+});
   });
 socket.on("chat message", (message) => {
 const msgId = Date.now();
