@@ -17,8 +17,12 @@ io.on("connection", (socket) => {
   socket.username = name.trim().toLowerCase();
     users[name] = socket.id;
 userStatus[name] = "online";
-
-    io.emit("userList", Object.keys(users));
+io.emit("registeredUsers",
+  Object.keys(userStatus).map(name => ({
+    username: name,
+    online: userStatus[name] === "online"
+  }))
+);
 
    socket.emit("private message", {
   from: "System",
@@ -75,7 +79,12 @@ socket.on("message received", (data) => {
     if (socket.username) {
       delete users[socket.username];
 userStatus[socket.username] = "offline";
-      io.emit("userList", Object.keys(users));
+     io.emit("registeredUsers",
+  Object.keys(userStatus).map(name => ({
+    username: name,
+    online: userStatus[name] === "online"
+  }))
+);
     }
   });
 
