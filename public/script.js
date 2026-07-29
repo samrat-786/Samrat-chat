@@ -10,20 +10,16 @@ const chat = document.getElementById("chat");
 
 const form = document.getElementById("form");
 const input = document.getElementById("input");
-let typing = false;
 
-input.addEventListener("input", () => {
-  if (!typing) {
-    typing = true;
-    socket.emit("typing");
-  }
 
+input.addEventListener("keyup", () => {
+socket.emit("typing");
+console.log("typing sent");
   clearTimeout(window.typingTimer);
 
   window.typingTimer = setTimeout(() => {
-    typing = false;
     socket.emit("stop typing");
-  }, 3000);
+  }, 6000);
 });
 const messages = document.getElementById("messages");
 const userList = document.getElementById("userList");
@@ -307,12 +303,19 @@ socket.on("voice message", (data) => {
   messages.appendChild(li);
 });
 socket.on("typing", (name) => {
-  document.getElementById("typing").textContent =
-    "✍️ " + name + " typing..."
+  console.log("Typing event:", name);
+  let t = document.getElementById("typingMsg");
+if (!t) {
+  t = document.createElement("li");
+  t.id = "typingMsg";
+  messages.appendChild(t);
+}
+t.textContent = "✍️ " + name + " typing...";
 });
 
 socket.on("stop typing", () => {
-  document.getElementById("typing").textContent = "";
+  const t = document.getElementById("typingMsg");
+if (t) t.remove();
 });
 socket.on("message delivered", (data) => {
   const tick = document.getElementById(`tick-${data.id}`);
