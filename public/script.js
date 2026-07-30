@@ -26,6 +26,27 @@ const userList = document.getElementById("userList");
 
 const photoBtn = document.getElementById("photoBtn");
 const imageInput = document.getElementById("imageInput");
+const profileBtn = document.getElementById("profileBtn");
+const profileInput = document.getElementById("profileInput");
+let selectedProfile = "";
+profileBtn.onclick = () => {
+  profileInput.click();
+};
+
+profileInput.onchange = () => {
+  const file = profileInput.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      selectedProfile = reader.result;
+      alert("✅ Profile Picture Selected");
+    };
+
+    reader.readAsDataURL(file);
+  }
+};
 const voiceBtn = document.getElementById("voiceBtn");
 
 const imagePreview = document.getElementById("imagePreview");
@@ -36,7 +57,10 @@ socket.on("connect", () => {
   if (savedUser) {
     username = savedUser;
 
-    socket.emit("join", username);
+    socket.emit("join", {
+  username: username,
+  profile: selectedProfile
+});
 
     login.style.display = "none";
     chat.style.display = "block";
@@ -52,7 +76,10 @@ loginBtn.onclick = () => {
 
   localStorage.setItem("username", username);
 
-  socket.emit("join", username);
+socket.emit("join", {
+  username: username,
+  profile: selectedProfile
+});
 
   login.style.display = "none";
   chat.style.display = "block";

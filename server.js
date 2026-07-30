@@ -13,24 +13,28 @@ app.use(express.static("public"));
 let users = {};
 let userStatus = {};
 let lastSeen = {};
+let userProfiles = {};
 
 io.on("connection", (socket) => {
 
-  socket.on("join", (name) => {
-  socket.username = name.trim().toLowerCase();
-    users[name] = socket.id;
+  socket.on("join", (data) => {
+socket.username = data.username.trim().toLowerCase();
+socket.profile = data.profile || "";
+userProfiles[socket.username] = socket.profile;
+    users[data.username] = socket.id;
 userStatus[name] = "online";
 io.emit("registeredUsers",
   Object.keys(userStatus).map(name => ({
     username: name,
     online: userStatus[name] === "online",
-    lastSeen: lastSeen[name] || ""
+    lastSeen: lastSeen[name] || "",
+profile: ""
   }))
 );
 
    socket.emit("private message", {
   from: "System",
-  message: "আপনি লগইন করেছেন: " + name,
+  message: "আপনি লগইন করেছেন: " + data.username,
   time: new Date().toLocaleString("en-IN", {
   timeZone: "Asia/Kolkata"
 })
