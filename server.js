@@ -22,7 +22,7 @@ socket.username = data.username.trim().toLowerCase();
 socket.profile = data.profile || "";
 userProfiles[socket.username] = socket.profile;
     users[data.username] = socket.id;
-userStatus[name] = "online";
+userStatus[socket.username] = "online";
 io.emit("registeredUsers",
   Object.keys(userStatus).map(name => ({
     username: name,
