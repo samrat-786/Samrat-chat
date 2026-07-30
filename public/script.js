@@ -202,6 +202,41 @@ imageInput.onchange = () => {
     reader.readAsDataURL(file);
   }
 };
+const videoBtn = document.getElementById("videoBtn");
+const videoInput = document.getElementById("videoInput");
+
+let selectedVideo = "";
+
+videoBtn.onclick = () => {
+  videoInput.click();
+};
+
+videoInput.onchange = () => {
+  const file = videoInput.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      selectedVideo = reader.result;
+console.log("Video selected");
+document.getElementById("sendVideoBtn").style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+};
+document.getElementById("sendVideoBtn").onclick = () => {
+  if (selectedVideo) {
+    socket.emit("video message", {
+      video: selectedVideo
+    });
+
+    selectedVideo = "";
+    document.getElementById("sendVideoBtn").style.display = "none";
+  }
+};
 socket.on("image message", (data) => {
   const li = document.createElement("li");
 
@@ -215,6 +250,29 @@ socket.on("image message", (data) => {
     <div class="bubble">
       <b>${data.from}</b><br>
       <img src="${data.image}" style="max-width:200px;border-radius:10px;">
+    </div>
+  `;
+
+  messages.appendChild(li);
+  messages.scrollTop = messages.scrollHeight;
+});
+socket.on("video message", (data) => {
+  const li = document.createElement("li");
+
+  if (data.from === username) {
+    li.className = "my-message";
+  } else {
+    li.className = "other-message";
+  }
+
+  li.innerHTML = `
+    <div class="bubble">
+      <b>${data.from}</b><br>
+      <video controls style="max-width:250px;border-radius:10px;">
+        <source src="${data.video}" type="video/mp4">
+      </video>
+      <br>
+      <a href="${data.video}" download="video.mp4">⬇️ Download</a>
     </div>
   `;
 

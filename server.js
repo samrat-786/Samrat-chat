@@ -4,7 +4,9 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  maxHttpBufferSize: 10 * 1024 * 1024
+});
 
 app.use(express.static("public"));
 
@@ -56,6 +58,16 @@ socket.on("image message", (data) => {
   io.emit("image message", {
     from: socket.username,
     image: data.image
+  });
+});
+
+socket.on("video message", (data) => {
+  io.emit("video message", {
+    from: socket.username,
+    video: data.video,
+    time: new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata"
+    })
   });
 });
 socket.on("voice message", (data) => {
