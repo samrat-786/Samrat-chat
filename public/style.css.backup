@@ -1,0 +1,87 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #e5ddd5;
+  margin: 0;
+  padding: 20px;
+}
+
+h2 {
+  text-align: center;
+  color: #075e54;
+}
+
+#messages {
+  list-style: none;
+  padding: 10px;
+  background: white;
+  height: 400px;
+  overflow-y: auto;
+  border-radius: 10px;
+}
+#messages li {
+display: block;
+  margin: 5px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  width: fit-content;
+  max-width: 75%;
+  font-size: 14px;
+}
+
+.time {
+  font-size: 10px;
+  color: gray;
+  margin-top: 3px;
+}
+
+#userList {
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#input {
+  width: 70%;
+  padding: 12px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 12px 20px;
+  border-radius: 20px;
+  border: none;
+  background: #075e54;
+  color: white;
+}
+
+#dark {
+  margin-top: 15px;
+}
+.my-message {
+  background: #dcf8c6;
+  float: right;
+  clear: both;
+  border-bottom-right-radius: 2px;
+}
+
+.other-message {
+  background: white;
+  margin-right: auto;
+  border-bottom-left-radius: 2px;
+}
+#userList {
+  font-size: 14px;
+}
+#typing {
+  font-size: 13px;
+  font-style: italic;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.5;
+  }
+}

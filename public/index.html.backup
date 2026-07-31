@@ -16,21 +16,7 @@
 <button id="loginBtn">Join Chat</button>
 </div>
 <div id="chat" style="display:none;">
-<div id="chatHeader">
-  <div id="chatTitle">Samrat Chat</div>
-  <div id="menuBtn">⋮</div>
-</div>
-
-<div id="menuBox">
-  <div>👤 Profile</div>
-  <div>🌙 Dark Mode</div>
-  <div>🔔 Notifications</div>
-  <div>🔒 Privacy</div>
-  <div>⚙ Settings</div>
-  <div>ℹ About</div>
-  <div id="menuLogout">🚪 Logout</div>
-</div>
-
+<button id="logoutBtn">🚪 Logout</button>
 
 <select id="userList">
   <option value="">🌍 Everyone</option>
@@ -54,7 +40,7 @@ type="text"
 placeholder="Type message..."
 autocomplete="off"
 >
-<button type="submit">➤</button>
+<button type="submit">Send</button>
 </form>
 
 </div><script src="/socket.io/socket.io.js"></script>

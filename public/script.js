@@ -408,13 +408,23 @@ socket.on("message delivered", (data) => {
     tick.textContent = "✓✓";
   }
 });
-const logoutBtn = document.getElementById("logoutBtn");
+const menuLogout = document.getElementById("menuLogout");
 
-logoutBtn.onclick = () => {
-  localStorage.removeItem("username");
-  username = "";
-  login.style.display = "block";
-  chat.style.display = "none";
-  usernameInput.value = "";
-messages.innerHTML = "";
-};
+if(menuLogout){
+  menuLogout.onclick = () => {
+    localStorage.removeItem("username");
+    location.reload();
+  };
+}
+const menuBtn = document.getElementById("menuBtn");
+const menuBox = document.getElementById("menuBox");
+
+if(menuBtn && menuBox){
+  menuBtn.onclick = function(){
+    if(menuBox.style.display === "block"){
+      menuBox.style.display = "none";
+    }else{
+      menuBox.style.display = "block";
+    }
+  };
+}
