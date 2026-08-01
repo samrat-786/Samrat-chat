@@ -61,7 +61,10 @@ const msgId = Date.now();
 socket.on("image message", (data) => {
   io.emit("image message", {
     from: socket.username,
-    image: data.image
+    image: data.image,
+    time: new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata"
+    })
   });
 });
 

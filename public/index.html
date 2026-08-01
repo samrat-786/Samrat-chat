@@ -39,15 +39,17 @@
 <div id="typing" style="color:gray;font-style:italic;margin:5px 0;"></div>
 
 <ul id="messages"></ul>
-<button id="voiceBtn">🎤 Voice</button>
 <input type="file" id="imageInput" accept="image/*" hidden>
-<button id="photoBtn" type="button">📷 Photo</button>
 <input type="file" id="videoInput" accept="video/*" hidden>
-<button id="videoBtn" type="button">🎥 Video</button>
 <button id="sendVideoBtn" type="button" style="display:none;">Send Video</button>
-<form id="form">
-<img id="imagePreview" style="width:200px;display:none;">
+<div id="previewBox">
+  <img id="imagePreview">
+</div>
 <button id="sendImageBtn" type="button" style="display:none;">Send Photo</button>
+<form id="form">
+<button id="voiceBtn" type="button">🎤</button>
+<button id="photoBtn" type="button">📷</button>
+<button id="videoBtn" type="button">🎥</button>
 <input
 id="input"
 type="text"

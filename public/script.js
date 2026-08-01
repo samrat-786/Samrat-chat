@@ -132,11 +132,25 @@ if (data.from === username) {
 // Send Message
 form.onsubmit = (e) => {
   e.preventDefault();
+const receiver = userList.value;
+const message = input.value.trim();
 
-  const receiver = userList.value;
-  const message = input.value.trim();
+if (selectedImage) {
+  socket.emit("image message", {
+    image: selectedImage
+  });
 
-  if (!message) return;
+  selectedImage = "";
+imagePreview.classList.remove("show");
+document.getElementById("previewBox").classList.remove("show");
+imagePreview.style.display = "none";
+imagePreview.src = "";
+  sendImageBtn.style.display = "none";
+  imageInput.value = "";
+  return;
+}
+
+if (!message) return;
 
   if (receiver) {
     socket.emit("private message", {
@@ -222,8 +236,18 @@ imageInput.onchange = () => {
  reader.onload = () => {
   selectedImage = reader.result;
   imagePreview.src = selectedImage;
-  imagePreview.style.display = "block";
-  sendImageBtn.style.display = "block";
+
+  // ছোট preview দেখাও
+document.getElementById("previewBox").classList.add("show");
+imagePreview.classList.add("show");
+imagePreview.style.display = "block";
+  imagePreview.style.width = "60px";
+  imagePreview.style.height = "60px";
+  imagePreview.style.objectFit = "cover";
+  imagePreview.style.borderRadius = "8px";
+  imagePreview.style.margin = "6px 0";
+
+  sendImageBtn.style.display = "none";
 };
 
     reader.readAsDataURL(file);
@@ -274,11 +298,20 @@ socket.on("image message", (data) => {
   }
 
   li.innerHTML = `
-    <div class="bubble">
-      <b>${data.from}</b><br>
+  <div class="bubble">
+    <b>${data.from}</b><br>
+
+    <a href="${data.image}" target="_blank">
       <img src="${data.image}" style="max-width:200px;border-radius:10px;">
-    </div>
-  `;
+    </a>
+
+    <br>
+
+    <a href="${data.image}" download="photo.jpg">⬇️ Download Photo</a>
+<br>
+<div class="time">🕒 ${data.time || new Date().toLocaleString("en-IN")} ✓</div>
+  </div>
+`;
 
   messages.appendChild(li);
   messages.scrollTop = messages.scrollHeight;
@@ -324,22 +357,12 @@ let audioChunks = [];
 voiceBtn.onclick = async () => {
   try {
     if (!mediaRecorder || mediaRecorder.state === "inactive") {
-let stream;
 
-try {
-  stream = await navigator.mediaDevices.getUserMedia({
-    audio: true
-  });
-} catch (err) {
-  alert("Microphone Error: " + err.name + "\n" + err.message);
-  return;
-}
+      let stream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
 
-      const options = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-    ? { mimeType: "audio/webm;codecs=opus" }
-    : {};
-
-mediaRecorder = new MediaRecorder(stream, options);
+      mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
 
       mediaRecorder.ondataavailable = (e) => {
@@ -347,9 +370,9 @@ mediaRecorder = new MediaRecorder(stream, options);
       };
 
       mediaRecorder.onstop = () => {
-       const audioBlob = new Blob(audioChunks, {
-  type: mediaRecorder.mimeType || "audio/webm"
-}); 
+        const audioBlob = new Blob(audioChunks, {
+          type: "audio/webm"
+        });
 
         const reader = new FileReader();
 
@@ -367,7 +390,7 @@ mediaRecorder = new MediaRecorder(stream, options);
 
     } else {
       mediaRecorder.stop();
-      voiceBtn.textContent = "🎤 Voice";
+      voiceBtn.textContent = "🎤";
     }
 
   } catch (err) {

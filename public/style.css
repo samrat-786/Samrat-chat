@@ -41,11 +41,13 @@ display: block;
   margin-bottom: 10px;
 }
 
-#input {
-  width: 70%;
-  padding: 12px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
+#input{
+  width: calc(100% - 190px);
+  height:42px;
+  border:1px solid #ccc;
+  border-radius:22px;
+  padding:0 14px;
+  font-size:16px;
 }
 
 button {
@@ -84,29 +86,34 @@ button {
   50% {
     opacity: 0.5;
   }
+}#chat{
+  height:100vh;
+  display:flex;
+  flex-direction:column;
 }
 #chatHeader{
-  height:55px;
-  background:#075e54;
-  color:white;
+  height:50px;
+  background:#075E54;
+  color:#fff;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 15px;
-  box-sizing:border-box;
-  position:relative;
+  padding:0 14px;
+  border-radius:0;
 }
 
 #chatTitle{
-  font-size:20px;
-  font-weight:bold;
+  font-size:22px;
+  font-weight:600;
+  color:white;
 }
 
 #menuBtn{
-  font-size:32px;
-  cursor:pointer;
+  font-size:26px;
   color:white;
-  padding:5px 10px;
+  cursor:pointer;
+  padding:4px 8px;
+  line-height:1;
 }
 
 #menuBox{
@@ -135,13 +142,20 @@ button {
 }
 #voiceBtn,
 #photoBtn,
-#videoBtn,
-#sendVideoBtn {
+#videoBtn{
+  width:42px;
+  height:42px;
+  min-width:42px;
   border:none;
-  border-radius:20px;
-  padding:8px 12px;
-  font-size:14px;
-  cursor:pointer;
+  border-radius:50%;
+  background:#25D366;
+  color:#fff;
+  font-size:20px;
+  padding:0;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 #voiceBtn{
@@ -180,17 +194,48 @@ button {
   width:100%;
   display:flex;
   align-items:center;
-  gap:6px;
-  padding:8px;
-  background:#f0f0f0;
+  gap:8px;
+  padding:8px 10px;
+  background:#f0f2f5;
+  border-top:1px solid #ddd;
   box-sizing:border-box;
 }
+
 #form button[type="submit"]{
-  width:45px;
-  height:45px;
+  width:46px;
+  height:46px;
+  min-width:46px;
+  border:none;
   border-radius:50%;
+  background:#25D366;
+  color:#fff;
+  font-size:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   padding:0;
-  font-size:18px;
 }
 
-
+#imagePreview{
+  width:140px;
+  height:140px;
+  object-fit:cover;
+  border-radius:12px;
+  border:1px solid #ddd;
+  display:none;
+}
+#imagePreview.show{
+  display:block;
+}
+#previewBox{
+  display:none;
+  position:fixed;
+  bottom:70px;
+  left:10px;
+  z-index:999;
+  padding:0;
+  background:transparent;
+}
+#previewBox.show{
+  display:block;
+}
